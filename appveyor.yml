@@ -1,9 +1,0 @@
-version: 1.3.{build}
-configuration:
-- Debug
-- Release
-build:
-  verbosity: minimal
-artifacts:
-- path: '**\Release\accelSwitch.exe'
-  name: accelSwitch.v$(appveyor_build_version).exe
