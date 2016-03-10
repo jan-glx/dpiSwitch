@@ -1,0 +1,1 @@
+Program('accelSwitch/accelSwitch.cpp', LIBS=['User32.lib'])
