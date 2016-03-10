@@ -2,6 +2,7 @@
 // Credits to Cody Gray @ http://stackoverflow.com/a/9052357/1870254
 //
 
+#include "stdafx.h"
 #include "windows.h"
 #include <string>
 #include <iostream>
