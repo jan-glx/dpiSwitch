@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "accelSwitch.h"
 #include "windows.h"
 #include <string>
 #include <iostream>
@@ -51,10 +52,26 @@ void ErrorExit(std::string lpszFunction)
 	ExitProcess(1);
 }
 
+int switchMouseAcceleration(bool turnOn, bool toggle)
+{
+	int pvParam[3];
+	// Get the current values.
+	if (!SystemParametersInfoW(SPI_GETMOUSE, 0, pvParam, 0))
+		return EXIT_FAILURE;
+
+	// Modify the acceleration value as directed.
+	pvParam[2] = toggle ? !pvParam[2] : turnOn;
+
+	// Update the system setting.
+	if (!SystemParametersInfoW(SPI_SETMOUSE, 0, pvParam, SPIF_SENDCHANGE))
+		return EXIT_FAILURE;
+	return EXIT_SUCCESS;
+}
+
+#ifndef LIB
 int main(int argc, char* argv[])
 {
 	bool toggle=false, turnOn=false;
-	int pvParam[3];
 
 	if (argc == 1 || (argc == 2 && !strcmp(argv[1], "toggle")))
 		toggle = true;
@@ -66,17 +83,9 @@ int main(int argc, char* argv[])
 		std::cerr << "Usage: " << argv[0] << " [on|off|toggle]\nNo argument will toggle mouse acceleration / enhance pointer precision." << std::endl;
 		return EXIT_FAILURE;
 	}
-
-	// Get the current values.
-	if(!SystemParametersInfoW(SPI_GETMOUSE, 0, pvParam, 0))
-		ErrorExit("SPI_GETMOUSE");
-
-	// Modify the acceleration value as directed.
-	pvParam[2] = toggle ? !pvParam[2] : turnOn;
-
-	// Update the system setting.
-	if (!SystemParametersInfoW(SPI_SETMOUSE, 0, pvParam, SPIF_SENDCHANGE))
-		ErrorExit("SPI_SETMOUSE");
+	if (EXIT_FAILURE==switchMouseAcceleration(turnOn, toggle))
+		ErrorExit("SPI_SETMOUSE or SPI_GETMOUSE");
 	return EXIT_SUCCESS;
 }
+#endif
 

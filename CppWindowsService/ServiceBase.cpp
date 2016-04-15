@@ -18,6 +18,7 @@
 
 #pragma region Includes
 #include "ServiceBase.h"
+#include "accelSwitch.h"
 #include <assert.h>
 #include <strsafe.h>
 #pragma endregion
@@ -131,10 +132,14 @@ DWORD WINAPI CServiceBase::ServiceCtrlHandlerEx(
 		switch (dwEventType)
 		{
 		case DBT_DEVICEARRIVAL:
-			s_service->WriteEventLogEntry(L"com.accelSwitch.DBT_DEVICEARRIVAL", EVENTLOG_INFORMATION_TYPE, 1);
+			if (switchMouseAcceleration(false))
+				s_service->WriteErrorLogEntry(L"switchMouseAcceleration", GetLastError());
+			s_service->WriteEventLogEntry(L"Mouse plugged in - turned mouse acceleration off", EVENTLOG_INFORMATION_TYPE, 1);
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
-			s_service->WriteEventLogEntry(L"com.accelSwitch.DBT_DEVICEREMOVECOMPLETE", EVENTLOG_INFORMATION_TYPE, 2);
+			if (switchMouseAcceleration(true))
+				s_service->WriteErrorLogEntry(L"switchMouseAcceleration", GetLastError());
+			s_service->WriteEventLogEntry(L"Mouse removed - turned mouse acceleration on", EVENTLOG_INFORMATION_TYPE, 2);
 			break;
 		default:
 			break;

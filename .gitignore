@@ -156,3 +156,5 @@ $RECYCLE.BIN/
 .DS_Store
 .sconsign.dblite
 *.exe
+CppWindowsService/Win32/
+accelSwitch/ServiceRelease/

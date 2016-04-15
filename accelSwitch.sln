@@ -10,7 +10,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTe
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2} = {0B3B87B0-6D0B-444D-A8EE-B448373F10A2}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppWindowsService", "CppWindowsService\CppWindowsService.vcxproj", "{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "accelSwitchService", "CppWindowsService\CppWindowsService.vcxproj", "{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2} = {0B3B87B0-6D0B-444D-A8EE-B448373F10A2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +25,8 @@ Global
 		Release MinSize|x64 = Release MinSize|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
+		ServiceRelease|Win32 = ServiceRelease|Win32
+		ServiceRelease|x64 = ServiceRelease|x64
 		Unicode Debug|Win32 = Unicode Debug|Win32
 		Unicode Debug|x64 = Unicode Debug|x64
 		Unicode Release MinDependency|Win32 = Unicode Release MinDependency|Win32
@@ -46,6 +51,10 @@ Global
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.Release|Win32.Build.0 = Release|Win32
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.Release|x64.ActiveCfg = Release|x64
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.Release|x64.Build.0 = Release|x64
+		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.ServiceRelease|Win32.ActiveCfg = ServiceRelease|Win32
+		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.ServiceRelease|Win32.Build.0 = ServiceRelease|Win32
+		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.ServiceRelease|x64.ActiveCfg = ServiceRelease|x64
+		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.ServiceRelease|x64.Build.0 = ServiceRelease|x64
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.Unicode Debug|Win32.Build.0 = Debug|Win32
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2}.Unicode Debug|x64.ActiveCfg = Debug|x64
@@ -74,6 +83,9 @@ Global
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Release|Win32.Build.0 = Release|Win32
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Release|x64.ActiveCfg = Release|x64
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Release|x64.Build.0 = Release|x64
+		{ADEA876D-ED69-4359-9C8B-24399967814B}.ServiceRelease|Win32.ActiveCfg = Release|Win32
+		{ADEA876D-ED69-4359-9C8B-24399967814B}.ServiceRelease|x64.ActiveCfg = service|x64
+		{ADEA876D-ED69-4359-9C8B-24399967814B}.ServiceRelease|x64.Build.0 = service|x64
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Unicode Debug|Win32.Build.0 = Debug|Win32
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Unicode Debug|x64.ActiveCfg = Debug|x64
@@ -102,6 +114,10 @@ Global
 		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release|Win32.Build.0 = Release|Win32
 		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release|x64.ActiveCfg = Release|x64
 		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release|x64.Build.0 = Release|x64
+		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|Win32.ActiveCfg = ServiceRelease|Win32
+		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|Win32.Build.0 = ServiceRelease|Win32
+		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|x64.ActiveCfg = ServiceRelease|x64
+		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|x64.Build.0 = ServiceRelease|x64
 		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
 		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|Win32.Build.0 = Debug|Win32
 		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|x64.ActiveCfg = Debug|x64
