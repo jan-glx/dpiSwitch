@@ -85,9 +85,7 @@ void CSampleService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 
 	HANDLE hRecipient = this->GetStatusHandle();
 
-	GUID InterfaceClassGuid = { 0x4D36E96F, 0xE325, 0x11CE, 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 }; 
-	// mouse or pointing device, accoring to http://pcsupport.about.com/od/driverssupport/a/device-class-guid.htm
-	
+	GUID InterfaceClassGuid = { 0x378de44c, 0x56ef, 0x11d1, 0xbc, 0x8c, 0x00, 0xa0, 0xc9, 0x14, 0x05, 0xdd }; // GUID_DEVINTERFACE_MOUSE
 	DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
 
 	ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
@@ -108,13 +106,28 @@ void CSampleService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 		HRESULT hr = StringCbPrintfW(pszDest, cbDest, pszFormat, pszTxt, GetLastError());
 		WriteEventLogEntry(pszDest, EVENTLOG_ERROR_TYPE);
 	}
-	else {
-		WriteEventLogEntry(L"RegisterDeviceNotification done", EVENTLOG_INFORMATION_TYPE);
-	}
 }
 
 
+//
+//   FUNCTION: CSampleService::ServiceWorkerThread(void)
+//
+//   PURPOSE: The method performs the main function of the service. It runs 
+//   on a thread pool worker thread.
+//
+void CSampleService::ServiceWorkerThread(void)
+{
+	// Periodically check if the service is stopping.
+	while (!m_fStopping)
+	{
+		// Perform main service function here...
 
+		::Sleep(2000);  // Simulate some lengthy operations.
+	}
+
+	// Signal the stopped event.
+	SetEvent(m_hStoppedEvent);
+}
 
 //
 //   FUNCTION: CSampleService::OnStop(void)
@@ -141,9 +154,9 @@ void CSampleService::OnStop()
 
     // Indicate that the service is stopping and wait for the finish of the 
     // main service function (ServiceWorkerThread).
-    m_fStopping = TRUE;
-    if (WaitForSingleObject(m_hStoppedEvent, INFINITE) != WAIT_OBJECT_0)
-    {
-        throw GetLastError();
-    }
+    //m_fStopping = TRUE;
+    //if (WaitForSingleObject(m_hStoppedEvent, INFINITE) != WAIT_OBJECT_0)
+    //{
+    //    throw GetLastError();
+    //}
 }

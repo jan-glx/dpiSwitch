@@ -84,7 +84,7 @@ void WINAPI CServiceBase::ServiceMain(DWORD dwArgc, PWSTR *pszArgv)
     {
         throw GetLastError();
     }
-	s_service->WriteEventLogEntry(L"com.accelSwitch.RegisterServiceCtrlHandlerEx", EVENTLOG_INFORMATION_TYPE);
+	s_service->WriteEventLogEntry(L"com.accelSwitch.ServiceMain", EVENTLOG_INFORMATION_TYPE);
     // Start the service.
     s_service->Start(dwArgc, pszArgv);
 }
@@ -119,7 +119,6 @@ DWORD WINAPI CServiceBase::ServiceCtrlHandlerEx(
 	_In_ LPVOID lpEventData,
 	_In_ LPVOID lpContext)
 {
-	s_service->WriteEventLogEntry(L"com.accelSwitch.ServiceCtrlHandlerEx", EVENTLOG_INFORMATION_TYPE);
     switch (dwCtrl)
     {
 	case SERVICE_CONTROL_STOP: s_service->Stop();  return NO_ERROR;
@@ -128,16 +127,14 @@ DWORD WINAPI CServiceBase::ServiceCtrlHandlerEx(
 	case SERVICE_CONTROL_SHUTDOWN: s_service->Shutdown();  return NO_ERROR;
 	case SERVICE_CONTROL_INTERROGATE: return NO_ERROR;
 	case SERVICE_CONTROL_DEVICEEVENT:
-		s_service->WriteEventLogEntry(L"com.accelSwitch.SERVICE_CONTROL_DEVICEEVENT", EVENTLOG_INFORMATION_TYPE);
-
 		// Output some messages to the window.
 		switch (dwEventType)
 		{
 		case DBT_DEVICEARRIVAL:
-			s_service->WriteEventLogEntry(L"com.accelSwitch.DBT_DEVICEARRIVAL", EVENTLOG_INFORMATION_TYPE);
+			s_service->WriteEventLogEntry(L"com.accelSwitch.DBT_DEVICEARRIVAL", EVENTLOG_INFORMATION_TYPE, 1);
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
-			s_service->WriteEventLogEntry(L"com.accelSwitch.DBT_DEVICEREMOVECOMPLETE", EVENTLOG_INFORMATION_TYPE);
+			s_service->WriteEventLogEntry(L"com.accelSwitch.DBT_DEVICEREMOVECOMPLETE", EVENTLOG_INFORMATION_TYPE, 2);
 			break;
 		default:
 			break;
@@ -537,7 +534,7 @@ void CServiceBase::SetServiceStatus(DWORD dwCurrentState,
 //     EVENTLOG_INFORMATION_TYPE
 //     EVENTLOG_WARNING_TYPE
 //
-void CServiceBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType)
+void CServiceBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType, DWORD dwEventID)
 {
     HANDLE hEventSource = NULL;
     LPCWSTR lpszStrings[2] = { NULL, NULL };
@@ -548,10 +545,10 @@ void CServiceBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType)
         lpszStrings[0] = m_name;
         lpszStrings[1] = pszMessage;
 
-        ReportEvent(hEventSource,  // Event log handle
+        ReportEventW(hEventSource,  // Event log handle
             wType,                 // Event type
             0,                     // Event category
-            0,                     // Event identifier
+			dwEventID,                     // Event identifier
             NULL,                  // No security identifier
             2,                     // Size of lpszStrings array
             0,                     // No binary data

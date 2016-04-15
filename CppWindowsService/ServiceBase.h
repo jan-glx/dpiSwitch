@@ -81,8 +81,7 @@ protected:
         DWORD dwWaitHint = 0);
 
     // Log a message to the Application event log.
-	void WriteEventLogEntry(PWSTR pszMessage, WORD wType);
-	static void WriteEventLogEntry(PWSTR pszMessage, WORD wType, PWSTR m_name);
+	void WriteEventLogEntry(PWSTR pszMessage, WORD wType, DWORD dwEventID = 0);
 
     // Log an error message to the Application event log.
     void WriteErrorLogEntry(PWSTR pszFunction, 
