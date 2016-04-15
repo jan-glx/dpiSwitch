@@ -158,3 +158,4 @@ $RECYCLE.BIN/
 *.exe
 CppWindowsService/Win32/
 accelSwitch/ServiceRelease/
+accelSwitch/ReleaseLib/
