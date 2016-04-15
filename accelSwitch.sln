@@ -10,11 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTe
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2} = {0B3B87B0-6D0B-444D-A8EE-B448373F10A2}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "accelSwitchService", "CppWindowsService\CppWindowsService.vcxproj", "{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2} = {0B3B87B0-6D0B-444D-A8EE-B448373F10A2}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "accelSwitcher", "accelSwitcher\accelSwitcher.vcxproj", "{D62FB0BB-BC36-4DCB-BD68-BFC17D75D958}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0B3B87B0-6D0B-444D-A8EE-B448373F10A2} = {0B3B87B0-6D0B-444D-A8EE-B448373F10A2}
@@ -112,40 +107,6 @@ Global
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Unicode Release MinSize|Win32.Build.0 = Release|Win32
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Unicode Release MinSize|x64.ActiveCfg = Release|x64
 		{ADEA876D-ED69-4359-9C8B-24399967814B}.Unicode Release MinSize|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.accelSwitcherRelease|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.accelSwitcherRelease|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.accelSwitcherRelease|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.accelSwitchRelease|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.accelSwitchRelease|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.accelSwitchRelease|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Debug|Win32.Build.0 = Debug|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Debug|x64.ActiveCfg = Debug|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Debug|x64.Build.0 = Debug|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinDependency|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinDependency|Win32.Build.0 = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinDependency|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinDependency|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinSize|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinSize|Win32.Build.0 = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinSize|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Release MinSize|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|Win32.Build.0 = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.ServiceRelease|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|Win32.Build.0 = Debug|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|x64.ActiveCfg = Debug|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Debug|x64.Build.0 = Debug|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinDependency|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinDependency|Win32.Build.0 = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinDependency|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinDependency|x64.Build.0 = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinSize|Win32.Build.0 = Release|Win32
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinSize|x64.ActiveCfg = Release|x64
-		{DE70E2D1-6A4D-4984-BD82-CE750889F0D3}.Unicode Release MinSize|x64.Build.0 = Release|x64
 		{D62FB0BB-BC36-4DCB-BD68-BFC17D75D958}.accelSwitcherRelease|Win32.ActiveCfg = Release|Win32
 		{D62FB0BB-BC36-4DCB-BD68-BFC17D75D958}.accelSwitcherRelease|Win32.Build.0 = Release|Win32
 		{D62FB0BB-BC36-4DCB-BD68-BFC17D75D958}.accelSwitcherRelease|x64.ActiveCfg = Release|Win32
