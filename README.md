@@ -6,7 +6,7 @@
 Two tiny tools to turn toggling the mouse acceleration settings every time you are stuck with a touchpad into an easy tasks.
 ## accelSwitch
 A small tool to manually toggle mouse acceleration / enhance pointer precision on Windows.
-[Download latest accelSwitch.exe](https://ci.appveyor.com/api/projects/jan-glx/accelswitch/artifacts/Release/accelSwitch.exe?job=Configuration%3A+accelSwitchRelease)
+
 ### Usage:
 
 - turn on  mouse acceleration:  ````accelSwitch.exe on````     
@@ -15,6 +15,6 @@ A small tool to manually toggle mouse acceleration / enhance pointer precision o
 
 ## accelSwitcher
 A small tool with no user interface that will *automatically* turn off mouse acceleration when a usb mouse is plugged in and turn mouse acceleration on when a usb mouse is removed. 
-[Download latest accelSwitcher.exe](https://ci.appveyor.com/api/projects/jan-glx/accelswitch/artifacts/Release/accelSwitcher.exe?job=Configuration%3A+accelSwitcherRelease)
+
 ### Usage:
 Put ````accelSwitcher.exe```` into the folder ````shell:startup```` to run it automatically at login or start it manually with a double click once for a session. Ending it is possible via the task manager only.
