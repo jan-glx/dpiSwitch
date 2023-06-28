@@ -1,25 +1,17 @@
-# dpiSwitch & dpiSwitcher
+# dpiSwitcher
 [![GitHub license](https://img.shields.io/github/license/jan-glx/dpiswitch.svg)](LICENSE)
 [![AppVeyor](https://img.shields.io/appveyor/ci/jan-glx/dpiswitch.svg)](https://ci.appveyor.com/project/jan-glx/dpiswitch)
 [![Github All Releases](https://img.shields.io/github/downloads/jan-glx/dpiswitch/total.svg)](https://github.com/jan-glx/dpiSwitch/releases/latest)
 
-Website: [jan-glx.github.io/dpiSwitch](http://jan-glx.github.io/dpiSwitch)
+dpiSwitcher is a minimalistic tool with no user interface. It *automatically* sets the DPI scaling of the internal monitor to 250% whenever an external display is connected, and back to 175% when the external display is disconnected. 
+To run the tool, execute `dpiSwitch.exe`.
 
-Two tiny tools to turn toggling the internal displays DPI settings every time you are stuck without an external display into an easy tasks.
-## dpiSwitch
-A small tool to manually  on Windows.
+## Usage:
+Place `dpiSwitcher.exe` in the `shell:startup` folder to launch it automatically upon login. Alternatively, you can start it manually with a double-click for a single session. To terminate the tool, use the task manager.
 
-### Usage:
-
-- set dpi scaling:  ````dpiSwitch.exe 1````     
-
-## dpiSwitcher
-A small tool with no user interface that will *automatically* set dpi scaling to one value when an external display is plugged in and to another when the last external dispaly is removed. 
-````dpiSwitch.exe 200 150````     
-
-### Usage:
-Put ````dpiSwitcher.exe```` into the folder ````shell:startup```` to run it automatically at login or start it manually with a double click once for a session. Ending it is possible via the task manager only.
+## Roadmap:
+- [ ] Implement functionality to remember specific DPI scaling settings for different situations, instead of using hardcoded values.
 
 ## Attribution
-This includes / is completely based on work by Sahil Singh https://github.com/lihas/windows-DPI-scaling-sample
-There is an anlternative command line version: https://github.com/imniko/SetDPI
+This project includes and is entirely based on the work by Sahil Singh found at https://github.com/lihas/windows-DPI-scaling-sample.
+An alternative command-line version is available at: https://github.com/imniko/SetDPI.
