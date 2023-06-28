@@ -1,9 +1,9 @@
-// accelSwitcher.cpp : Defines the entry point for the application.
+// dpiSwitcher.cpp : Defines the entry point for the application.
 //
 
 #include "stdafx.h"
-#include "accelSwitcher.h"
-#include "accelSwitch.h"
+#include "dpiSwitcher.h"
+#include "dpiSwitch.h"
 #include <dbt.h>
 #include <string>
 #include <codecvt>
@@ -34,11 +34,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
  	// TODO: Place code here.
 	MSG msg;
-	HACCEL hAccelTable;
+	HACCEL haccelTable;
 
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_ACCELSWITCHER, szWindowClass, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_DPISWITCHER, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
@@ -47,12 +47,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_ACCELSWITCHER));
+	haccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(LoadString(hInstance, IDC_DPISWITCHER, szWindowClass, MAX_LOADSTRING))) ;
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		if (!TranslateAccelerator(msg.hwnd, haccelTable, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -80,10 +80,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ACCELSWITCHER));
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DPISWITCHER));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_ACCELSWITCHER);
+	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_DPISWITCHER);
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -186,12 +186,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case DBT_DEVICEARRIVAL:
 			if (switchMouseAcceleration(false))
 				ErrorExit("switchMouseAcceleration");
-			std::cout << "Mouse plugged in - turned mouse acceleration off" << std::endl;
+			std::cout << "Mouse plugged in - turned mouse dpieration off" << std::endl;
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
 			if (switchMouseAcceleration(true))
 				ErrorExit("switchMouseAcceleration");
-			std::cout << "Mouse removed - turned mouse acceleration on" << std::endl; 
+			std::cout << "Mouse removed - turned mouse dpieration on" << std::endl; 
 			break;
 		default:
 			break;

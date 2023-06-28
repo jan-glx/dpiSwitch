@@ -19,7 +19,7 @@ namespace UnitTest
 
 			STARTUPINFO info = { sizeof(info) };
 			PROCESS_INFORMATION processInfo;
-			wchar_t command[] = L"accelSwitch.exe toggle";
+			wchar_t command[] = L"dpiSwitch.exe toggle";
 			if (!CreateProcessW(NULL, command, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))
 				ExitProcess(GetLastError());
 			WaitForSingleObject(processInfo.hProcess, INFINITE);
@@ -38,7 +38,7 @@ namespace UnitTest
 			STARTUPINFO info = { sizeof(info) };
 			PROCESS_INFORMATION processInfo;
 
-			wchar_t command[] = L"accelSwitch.exe off";
+			wchar_t command[] = L"dpiSwitch.exe off";
 			if (!CreateProcessW(NULL, command, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))
 				ExitProcess(GetLastError());
 			WaitForSingleObject(processInfo.hProcess, INFINITE);
@@ -49,7 +49,7 @@ namespace UnitTest
 				ExitProcess(GetLastError());
 			Assert::AreEqual(pvParam[2], 0);
 
-			wchar_t command2[] = L"accelSwitch.exe on";
+			wchar_t command2[] = L"dpiSwitch.exe on";
 			if (!CreateProcessW(NULL, command2, NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))
 				ExitProcess(GetLastError());
 			WaitForSingleObject(processInfo.hProcess, INFINITE);

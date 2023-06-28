@@ -1,9 +1,9 @@
-// accelSwitch.cpp : Defines the entry point for the console application.
+// dpiSwitch.cpp : Defines the entry point for the console application.
 // Credits to Cody Gray @ http://stackoverflow.com/a/9052357/1870254
 //
 
 #include "stdafx.h"
-#include "accelSwitch.h"
+#include "dpiSwitch.h"
 #include "windows.h"
 #include <string>
 #include <iostream>
@@ -59,7 +59,7 @@ int switchMouseAcceleration(bool turnOn, bool toggle)
 	if (!SystemParametersInfoW(SPI_GETMOUSE, 0, pvParam, 0))
 		return EXIT_FAILURE;
 
-	// Modify the acceleration value as directed.
+	// Modify the dpieration value as directed.
 	pvParam[2] = toggle ? !pvParam[2] : turnOn;
 
 	// Update the system setting.
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 	else if (argc == 2 && !strcmp(argv[1], "off"))
 		;
 	else {
-		std::cerr << "Usage: " << argv[0] << " [on|off|toggle]\nNo argument will toggle mouse acceleration / enhance pointer precision." << std::endl;
+		std::cerr << "Usage: " << argv[0] << " [on|off|toggle]\nNo argument will toggle mouse dpieration / enhance pointer precision." << std::endl;
 		return EXIT_FAILURE;
 	}
 	if (EXIT_FAILURE==switchMouseAcceleration(turnOn, toggle))
