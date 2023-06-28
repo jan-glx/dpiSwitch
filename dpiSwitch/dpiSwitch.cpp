@@ -9,6 +9,8 @@
 #include <iostream>
 #include <codecvt>
 
+#pragma warning(disable : 4996)
+
 // convert UTF-8 string to wstring
 std::wstring utf8_to_wstring(const std::string& str)
 {

@@ -1,6 +1,6 @@
 // dpiSwitcher.cpp : Defines the entry point for the application.
 //
-
+#include <Windows.h>
 #include "stdafx.h"
 #include "dpiSwitcher.h"
 #include "dpiSwitch.h"
@@ -10,6 +10,8 @@
 #include <codecvt>
 #include <iostream>
 #include <vector>
+#include <streambuf>
+#include <string>
 
 #define MAX_LOADSTRING 100
 
@@ -25,16 +27,44 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
+// Custom stream buffer that redirects output to OutputDebugString
+class DebugStreamBuffer : public std::streambuf
+{
+public:
+	DebugStreamBuffer() = default;
+
+protected:
+	virtual int_type overflow(int_type ch)
+	{
+		if (ch != EOF)
+		{
+			char_type character = static_cast<char_type>(ch);
+			OutputDebugStringA(&character);
+		}
+		return ch;
+	}
+
+	virtual std::streamsize xsputn(const char_type* s, std::streamsize count)
+	{
+		std::string output(s, s + count);
+		OutputDebugStringA(output.c_str());
+		return count;
+	}
+};
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
+	// Create the stream buffer and redirect std::cout to it
+	DebugStreamBuffer streamBuffer;
+	std::streambuf* oldBuffer = std::cout.rdbuf(&streamBuffer);
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
+	// TODO: Place code here.
 	MSG msg;
 	HACCEL haccelTable;
 
@@ -44,12 +74,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow))
+	if (!InitInstance(hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
 
-	haccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(LoadString(hInstance, IDC_DPISWITCHER, szWindowClass, MAX_LOADSTRING))) ;
+	haccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(LoadString(hInstance, IDC_DPISWITCHER, szWindowClass, MAX_LOADSTRING)));
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -61,7 +91,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
-	return (int) msg.wParam;
+	// Restore the old stream buffer
+	std::cout.rdbuf(oldBuffer);
+
+	return (int)msg.wParam;
 }
 
 
@@ -94,6 +127,71 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 
 
+//to store display info along with corresponding list item
+struct DisplayData
+{
+	LUID m_adapterId;
+	uint32_t m_sourceID;
+	uint32_t m_targetID;
+};
+
+DisplayData GetInternalDisplayData()
+{
+	UINT32 numPathArrayElements = 0, numModeInfoArrayElements = 0;
+	LONG status = GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS, &numPathArrayElements, &numModeInfoArrayElements);
+
+	if (status != ERROR_SUCCESS)
+	{
+		std::cout << "GetDisplayConfigBufferSizes() failed with error " << status << std::endl;
+		throw std::runtime_error("Failed to get display config buffer sizes");
+	}
+
+	std::vector<DISPLAYCONFIG_PATH_INFO> pathInfos(numPathArrayElements);
+	std::vector<DISPLAYCONFIG_MODE_INFO> modeInfos(numModeInfoArrayElements);
+
+	status = QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &numPathArrayElements, pathInfos.data(), &numModeInfoArrayElements, modeInfos.data(), nullptr);
+	if (status != ERROR_SUCCESS)
+	{
+		std::cout << "QueryDisplayConfig() failed with error " << status << std::endl;
+		throw std::runtime_error("Failed to query display config");
+	}
+
+	for (const auto& path : pathInfos)
+	{
+		DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName = {};
+		deviceName.header.size = sizeof(deviceName);
+		deviceName.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
+		deviceName.header.adapterId = path.targetInfo.adapterId;
+		deviceName.header.id = path.targetInfo.id;
+
+		status = DisplayConfigGetDeviceInfo(&deviceName.header);
+		if (status == ERROR_SUCCESS && deviceName.outputTechnology == DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL)
+		{
+			return { path.targetInfo.adapterId, path.sourceInfo.id, path.targetInfo.id };
+		}
+	}
+
+	throw std::runtime_error("No internal display found");
+}
+
+int GetNumberOfDisplays()
+{
+	UINT32 numPathArrayElements = 0, numModeInfoArrayElements = 0;
+	auto status = GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS, &numPathArrayElements, &numModeInfoArrayElements);
+
+	if (status != ERROR_SUCCESS)
+	{
+		// Log or handle error
+		std::cout << "GetDisplayConfigBufferSizes() failed with error " << status << std::endl;
+		return -1; // return an invalid value or handle the error as appropriate
+	}
+
+	return numPathArrayElements; // the number of active paths is the number of displays
+}
+
+
+
+
 //
 //   FUNCTION: InitInstance(HINSTANCE, int)
 //
@@ -120,7 +218,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    HANDLE hRecipient = hWnd;
 
-   GUID InterfaceClassGuid = { 0x378de44c, 0x56ef, 0x11d1, 0xbc, 0x8c, 0x00, 0xa0, 0xc9, 0x14, 0x05, 0xdd }; // GUID_DEVINTERFACE_MOUSE
+   GUID InterfaceClassGuid = { 0xE6F07B5F, 0xEE97, 0x4a90, {0xB0, 0x76, 0x33, 0xF5, 0x7B, 0xF4, 0xEA, 0xA7} }; //GUID_DEVINTERFACE_MONITOR
+
    DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
 
    ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
@@ -139,6 +238,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+bool set_internal_display_dpi(int dpi_scaling_percent)
+{
+	DisplayData internalDisplay = GetInternalDisplayData();
+	std::cout << "Set scaling of internal monitor to " << dpi_scaling_percent  << "% " << std::endl;
+	return DpiHelper::SetDPIScaling(internalDisplay.m_adapterId, internalDisplay.m_sourceID, dpi_scaling_percent);
+}
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -178,7 +283,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		if (!UnregisterDeviceNotification(hDeviceNotify))
 			ErrorExit("UnregisterDeviceNotification");
-		std::cout << "Unregistered" << std::endl;
 		PostQuitMessage(0);
 		break;
 	case WM_DEVICECHANGE:
@@ -188,12 +292,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case DBT_DEVICEARRIVAL:
 			if (switchMouseAcceleration(false))
 				ErrorExit("switchMouseAcceleration");
-			std::cout << "Mouse plugged in - turned mouse dpieration off" << std::endl;
+			std::cout << "Monitor plugged in" << std::endl;
+			set_internal_display_dpi(250);
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
-			if (switchMouseAcceleration(true))
-				ErrorExit("switchMouseAcceleration");
-			std::cout << "Mouse removed - turned mouse dpieration on" << std::endl; 
+			std::cout << "Monitor removed" << std::endl;
+			// checking that only one monitor is remaining liek this does not work well (would need a delay) since we check before the pat his removed. how ever you usually dont unplug just one external monitor anyways!
+			//if (GetNumberOfDisplays() == 1)
+			//{
+			//	std::cout << "Only one monitor remaining" << std::endl;
+			set_internal_display_dpi(175);
+			//}
+
 			break;
 		default:
 			break;
@@ -202,63 +312,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
-}
-
-//to store display info along with corresponding list item
-struct DisplayData {
-	LUID m_adapterId;
-	int m_targetID;
-	int m_sourceID;
-
-	DisplayData()
-	{
-		m_adapterId = {};
-		m_targetID = m_sourceID = -1;
-	}
-};
-
-std::vector<DisplayData> GetDisplayData()
-{
-	std::vector<DisplayData> displayDataCache;
-	std::vector<DISPLAYCONFIG_PATH_INFO> pathsV;
-	std::vector<DISPLAYCONFIG_MODE_INFO> modesV;
-	int flags = QDC_ONLY_ACTIVE_PATHS;
-	if (false == DpiHelper::GetPathsAndModes(pathsV, modesV, flags))
-	{
-		std::cout << "DpiHelper::GetPathsAndModes() failed\n";
-	}
-	displayDataCache.resize(pathsV.size());
-	for (int idx = 0; const auto & path : pathsV)
-	{
-		//get display name
-		auto adapterLUID = path.targetInfo.adapterId;
-		auto targetID = path.targetInfo.id;
-		auto sourceID = path.sourceInfo.id;
-
-		DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName;
-		deviceName.header.size = sizeof(deviceName);
-		deviceName.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
-		deviceName.header.adapterId = adapterLUID;
-		deviceName.header.id = targetID;
-		if (ERROR_SUCCESS != DisplayConfigGetDeviceInfo(&deviceName.header))
-		{
-			std::cout << "DisplayConfigGetDeviceInfo() failed";
-		}
-		else
-		{
-			std::wstring nameString = std::to_wstring(idx) + std::wstring(L". ") + deviceName.monitorFriendlyDeviceName;
-			if (DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL == deviceName.outputTechnology)
-			{
-				nameString += L"(internal display)";
-			}
-			DisplayData dd = {};
-			dd.m_adapterId = adapterLUID;
-			dd.m_sourceID = sourceID;
-			dd.m_targetID = targetID;
-
-			displayDataCache[idx] = dd;
-		}
-		idx += 1;
-	}
-	return displayDataCache;
 }
