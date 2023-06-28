@@ -52,6 +52,47 @@ protected:
 	}
 };
 
+
+const HKEY TOP_KEY = HKEY_CURRENT_USER;
+const wchar_t  PATH[] = L"Software\\dpiSwitcher";
+const wchar_t  REG_WITHOUT_NAME[] = L"last_dpi_scaling_without_external_monitor";
+const wchar_t  REG_WITH_NAME[] = L"last_dpi_scaling_with_external_monitor";
+
+bool writeIntToRegistry(int value, const wchar_t* valName) {
+	HKEY hKey;
+	DWORD dwDisposition;
+	LONG lResult;
+
+	// Create a new key or open it if it already exists
+	lResult = RegCreateKeyEx(TOP_KEY, PATH, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &dwDisposition);
+	if (lResult != ERROR_SUCCESS) {
+		return false;
+	}
+
+	lResult = RegSetValueEx(hKey, valName, 0, REG_DWORD, (const BYTE*)&value, sizeof(value));
+	RegCloseKey(hKey);
+
+	return lResult == ERROR_SUCCESS;
+}
+
+bool readIntFromRegistry(int* value, const wchar_t* valName) {
+	HKEY hKey;
+	DWORD dwType = REG_DWORD;
+	DWORD dwSize = sizeof(DWORD);
+	LONG lResult;
+
+	lResult = RegOpenKeyEx(TOP_KEY, PATH, 0, KEY_READ, &hKey);
+	if (lResult != ERROR_SUCCESS) {
+		return false;
+	}
+
+	lResult = RegGetValue(hKey, NULL, valName, RRF_RT_REG_DWORD, &dwType, value, &dwSize);
+	RegCloseKey(hKey);
+
+	return lResult == ERROR_SUCCESS;
+}
+
+
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPTSTR    lpCmdLine,
@@ -238,11 +279,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-bool set_internal_display_dpi(int dpi_scaling_percent)
+bool set_internal_display_dpi(const wchar_t* from, const wchar_t* to)
 {
 	DisplayData internalDisplay = GetInternalDisplayData();
-	std::cout << "Set scaling of internal monitor to " << dpi_scaling_percent  << "% " << std::endl;
-	return DpiHelper::SetDPIScaling(internalDisplay.m_adapterId, internalDisplay.m_sourceID, dpi_scaling_percent);
+	int current_scaling = DpiHelper::GetDPIScalingInfo(internalDisplay.m_adapterId, internalDisplay.m_sourceID).current;
+	writeIntToRegistry(current_scaling, from);
+	std::cout << "Set scaling of internal monitor from " << current_scaling;
+	readIntFromRegistry(&current_scaling, to);
+	std::cout << "% to " << current_scaling << " % " << std::endl;
+	return DpiHelper::SetDPIScaling(internalDisplay.m_adapterId, internalDisplay.m_sourceID, current_scaling);
 }
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -293,15 +338,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (switchMouseAcceleration(false))
 				ErrorExit("switchMouseAcceleration");
 			std::cout << "Monitor plugged in" << std::endl;
-			set_internal_display_dpi(250);
+			set_internal_display_dpi(REG_WITHOUT_NAME, REG_WITH_NAME);
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
 			std::cout << "Monitor removed" << std::endl;
-			// checking that only one monitor is remaining liek this does not work well (would need a delay) since we check before the pat his removed. how ever you usually dont unplug just one external monitor anyways!
+			// checking that only one monitor is remaining like this does not work well (would need a delay) since we check before the path his removed. however you usually don't unplug just one external monitor anyways!
 			//if (GetNumberOfDisplays() == 1)
 			//{
 			//	std::cout << "Only one monitor remaining" << std::endl;
-			set_internal_display_dpi(175);
+			set_internal_display_dpi(REG_WITH_NAME, REG_WITHOUT_NAME);
 			//}
 
 			break;
