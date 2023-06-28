@@ -65,7 +65,7 @@ private:
 };
 
 
-
+int current_n_displays = 1;
 const HKEY TOP_KEY = HKEY_CURRENT_USER;
 const wchar_t  PATH[] = L"Software\\dpiSwitcher";
 const wchar_t  REG_WITHOUT_NAME[] = L"last_dpi_scaling_without_external_monitor";
@@ -351,16 +351,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (switchMouseAcceleration(false))
 				ErrorExit("switchMouseAcceleration");
 			std::cout << "Monitor plugged in" << std::endl;
-			set_internal_display_dpi(REG_WITHOUT_NAME, REG_WITH_NAME);
+			current_n_displays = GetNumberOfDisplays();
+			std::cout << "Monitors present:" << current_n_displays << std::endl;
+
+			if (current_n_displays == 2) {
+				set_internal_display_dpi(REG_WITHOUT_NAME, REG_WITH_NAME);
+			}
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
 			std::cout << "Monitor removed" << std::endl;
-			// checking that only one monitor is remaining like this does not work well (would need a delay) since we check before the path his removed. however you usually don't unplug just one external monitor anyways!
-			//if (GetNumberOfDisplays() == 1)
-			//{
-			//	std::cout << "Only one monitor remaining" << std::endl;
-			set_internal_display_dpi(REG_WITH_NAME, REG_WITHOUT_NAME);
-			//}
+			current_n_displays = GetNumberOfDisplays();
+			current_n_displays--; // GetNumberOfDisplays() seems to have some delay, so we infere that it is one less now
+			std::cout << "Monitors remaining:" << current_n_displays << std::endl;
+			if(current_n_displays<=1) {
+				set_internal_display_dpi(REG_WITH_NAME, REG_WITHOUT_NAME);
+			}
 
 			break;
 		default:
