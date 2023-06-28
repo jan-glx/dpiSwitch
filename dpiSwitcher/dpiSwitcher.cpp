@@ -38,19 +38,32 @@ protected:
 	{
 		if (ch != EOF)
 		{
-			char_type character = static_cast<char_type>(ch);
-			OutputDebugStringA(&character);
+			buffer.push_back(static_cast<char>(ch));
+			if (ch == '\n')
+				FlushBuffer();
 		}
 		return ch;
 	}
 
 	virtual std::streamsize xsputn(const char_type* s, std::streamsize count)
 	{
-		std::string output(s, s + count);
-		OutputDebugStringA(output.c_str());
+		buffer.append(s, s + count);
+		size_t newlinePos = buffer.find('\n');
+		if (newlinePos != std::string::npos)
+			FlushBuffer();
 		return count;
 	}
+
+	void FlushBuffer()
+	{
+		OutputDebugStringA(buffer.c_str());
+		buffer.clear();
+	}
+
+private:
+	std::string buffer;
 };
+
 
 
 const HKEY TOP_KEY = HKEY_CURRENT_USER;
