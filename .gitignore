@@ -157,6 +157,6 @@ $RECYCLE.BIN/
 .sconsign.dblite
 *.exe
 CppWindowsService/Win32/
-accelSwitch/Release/
-accelSwitch/ReleaseLib/
-accelSwitch/DebugLib/
+dpiSwitch/Release/
+dpiSwitch/ReleaseLib/
+dpiSwitch/DebugLib/
