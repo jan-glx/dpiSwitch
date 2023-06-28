@@ -4,10 +4,9 @@
 [![Github All Releases](https://img.shields.io/github/downloads/jan-glx/dpiswitch/total.svg)](https://github.com/jan-glx/dpiSwitch/releases/latest)
 
 dpiSwitcher is a minimalistic tool with no user interface. It *automatically* sets the DPI scaling of the internal monitor to 250% whenever an external display is connected, and back to 175% when the external display is disconnected. 
-To run the tool, execute `dpiSwitch.exe`.
 
 ## Usage:
-Place `dpiSwitcher.exe` in the `shell:startup` folder to launch it automatically upon login. Alternatively, you can start it manually with a double-click for a single session. To terminate the tool, use the task manager.
+Place  [`dpiSwitcher.exe`](/releases/latest/download/dpiSwitcher.exe) in the `shell:startup` folder to launch it automatically upon login. Alternatively, you can start it manually (e.g. with a double-click) for a single session. To terminate the tool, use the task manager.
 
 ## Roadmap:
 - [ ] Implement functionality to remember specific DPI scaling settings for different situations, instead of using hardcoded values.
