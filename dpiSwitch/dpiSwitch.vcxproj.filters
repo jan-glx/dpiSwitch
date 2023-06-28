@@ -18,7 +18,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="accelSwitch.cpp">
+    <ClCompile Include="dpiSwitch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="accelSwitch.h">
+    <ClInclude Include="dpiSwitch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
