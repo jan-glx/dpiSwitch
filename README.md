@@ -20,3 +20,7 @@ A small tool with no user interface that will *automatically* turn off mouse acc
 
 ### Usage:
 Put ````accelSwitcher.exe```` into the folder ````shell:startup```` to run it automatically at login or start it manually with a double click once for a session. Ending it is possible via the task manager only.
+
+### Attribution
+This includes / is completely based on work by Sahil Singh https://github.com/lihas/windows-DPI-scaling-sample
+There is an anlternative command line version: https://github.com/imniko/SetDPI
