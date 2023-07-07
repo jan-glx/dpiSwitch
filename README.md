@@ -6,8 +6,10 @@
 dpiSwitcher is a minimalistic tool with no user interface. It automatically adjusts the DPI scaling of the *internal dispaly* whenever an external display is connected or disconnected to the last value set for the given number of dispalys. These settings are stored in the Windows registry (HKCU/software/dpiSwitchr).
 
 ## Usage:
-Place [`dpiSwitcher.exe`](https://github.com/jan-glx/dpiSwitch/releases/latest/download/dpiSwitcher.exe) in the `shell:startup` folder to have it launch automatically upon login. Alternatively, you can start it manually (e.g., with a double-click) for a single session. If you want to terminate the tool, you will need to use the task manager.
-Then, whenever the scaling of the internal monitor is not as you want, adjust it using the usual method (Right-click on desktop -> Display settings -> Scale). dpiSwitcher will be notified of this change and store your current dpi scaling setting for the current number of displays in te windows registry. Whenever you connect or disconnect an external display, dpiSwitcher loads the setting for the new number of dispalys from the registry and apply themn.
+1. Place [`dpiSwitcher.exe`](https://github.com/jan-glx/dpiSwitch/releases/latest/download/dpiSwitcher.exe) in the `shell:startup` folder to have it launch automatically upon login. Alternatively, you can start it manually (e.g., with a double-click) for a single session. If you want to terminate the tool, use the task manager.
+
+2. Whenever the scaling of the internal monitor is not to your liking, adjust it as usual (Windows settings -> Display settings -> Scale). <br>
+  => dpiSwitcher will be notified of this change and store the current dpi scaling setting for the current number of displays in the Windows registry. And whenever you connect or disconnect an external display leading to this number of monitors in the future, dpiSwitcher will load these settings from the registry and apply them.
 
 ## Roadmap:
 - [x] Implemented functionality to remember specific DPI scaling settings for different situations.
