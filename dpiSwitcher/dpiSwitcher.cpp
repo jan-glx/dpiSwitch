@@ -292,13 +292,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-bool set_internal_display_dpi(const wchar_t* from, const wchar_t* to)
+
+
+bool set_internal_display_dpi_from_registry(int current_n_displays)
 {
 	DisplayData internalDisplay = GetInternalDisplayData();
 	int current_scaling = DpiHelper::GetDPIScalingInfo(internalDisplay.m_adapterId, internalDisplay.m_sourceID).current;
-	writeIntToRegistry(current_scaling, from);
 	std::wcout << "Set scaling of internal monitor from " << current_scaling;
-	readIntFromRegistry(&current_scaling, to);
+	std::wstring reg_val_name = L"last_seen_dpi_for_" + std::to_wstring(current_n_displays) + L"_displays";
+	readIntFromRegistry(&current_scaling, reg_val_name.c_str());
 	std::wcout << "% to " << current_scaling << " % " << std::endl;
 	return DpiHelper::SetDPIScaling(internalDisplay.m_adapterId, internalDisplay.m_sourceID, current_scaling);
 }
@@ -317,6 +319,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
+	int current_scaling;
+	std::wstring reg_val_name;
 
 	switch (message)
 	{
@@ -343,6 +347,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ErrorExit("UnregisterDeviceNotification");
 		PostQuitMessage(0);
 		break;
+	case WM_DISPLAYCHANGE:
+		std::wcout << "WM_DISPLAYCHANGE" << std::endl;
+		current_n_displays = GetNumberOfDisplays();
+		DisplayData internalDisplay = GetInternalDisplayData();
+		current_scaling = DpiHelper::GetDPIScalingInfo(internalDisplay.m_adapterId, internalDisplay.m_sourceID).current;
+		reg_val_name = L"last_seen_dpi_for_" + std::to_wstring(current_n_displays) + L"_displays";
+		writeIntToRegistry(current_scaling, reg_val_name.c_str());
+		std::wcout << L"saved " << current_scaling << L" to " << reg_val_name << std::endl;
+		break;
 	case WM_DEVICECHANGE:
 		// Output some messages to the window.
 		switch (wParam)
@@ -351,20 +364,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			std::wcout << "Monitor plugged in" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
 			std::wcout << "Monitors present:" << current_n_displays << std::endl;
-
-			if (current_n_displays == 2) {
-				set_internal_display_dpi(REG_WITHOUT_NAME, REG_WITH_NAME);
-			}
+			set_internal_display_dpi_from_registry(current_n_displays);
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
 			std::wcout << "Monitor removed" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
 			current_n_displays--; // GetNumberOfDisplays() seems to have some delay, so we infere that it is one less now
 			std::wcout << "Monitors remaining:" << current_n_displays << std::endl;
-			if(current_n_displays<=1) {
-				set_internal_display_dpi(REG_WITH_NAME, REG_WITHOUT_NAME);
-			}
-
+			set_internal_display_dpi_from_registry(current_n_displays);
 			break;
 		default:
 			break;
