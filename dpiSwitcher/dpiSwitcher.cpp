@@ -348,8 +348,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case DBT_DEVICEARRIVAL:
-			if (switchMouseAcceleration(false))
-				ErrorExit("switchMouseAcceleration");
 			std::wcout << "Monitor plugged in" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
 			std::wcout << "Monitors present:" << current_n_displays << std::endl;
