@@ -28,7 +28,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
 // Custom stream buffer that redirects output to OutputDebugString
-class DebugStreamBuffer : public std::streambuf
+class DebugStreamBuffer : public std::wstreambuf
 {
 public:
 	DebugStreamBuffer() = default;
@@ -49,19 +49,19 @@ protected:
 	{
 		buffer.append(s, s + count);
 		size_t newlinePos = buffer.find('\n');
-		if (newlinePos != std::string::npos)
+		if (newlinePos != std::wstring::npos)
 			FlushBuffer();
 		return count;
 	}
 
 	void FlushBuffer()
 	{
-		OutputDebugStringA(buffer.c_str());
+		OutputDebugStringW(buffer.c_str());
 		buffer.clear();
 	}
 
 private:
-	std::string buffer;
+	std::wstring buffer;
 };
 
 
@@ -111,9 +111,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-	// Create the stream buffer and redirect std::cout to it
+	// Create the stream buffer and redirect std::wcout to it
 	DebugStreamBuffer streamBuffer;
-	std::streambuf* oldBuffer = std::cout.rdbuf(&streamBuffer);
+	std::wstreambuf* oldBuffer = std::wcout.rdbuf(&streamBuffer);
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -146,7 +146,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	// Restore the old stream buffer
-	std::cout.rdbuf(oldBuffer);
+	std::wcout.rdbuf(oldBuffer);
 
 	return (int)msg.wParam;
 }
@@ -196,7 +196,7 @@ DisplayData GetInternalDisplayData()
 
 	if (status != ERROR_SUCCESS)
 	{
-		std::cout << "GetDisplayConfigBufferSizes() failed with error " << status << std::endl;
+		std::wcout << "GetDisplayConfigBufferSizes() failed with error " << status << std::endl;
 		throw std::runtime_error("Failed to get display config buffer sizes");
 	}
 
@@ -206,7 +206,7 @@ DisplayData GetInternalDisplayData()
 	status = QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &numPathArrayElements, pathInfos.data(), &numModeInfoArrayElements, modeInfos.data(), nullptr);
 	if (status != ERROR_SUCCESS)
 	{
-		std::cout << "QueryDisplayConfig() failed with error " << status << std::endl;
+		std::wcout << "QueryDisplayConfig() failed with error " << status << std::endl;
 		throw std::runtime_error("Failed to query display config");
 	}
 
@@ -236,7 +236,7 @@ int GetNumberOfDisplays()
 	if (status != ERROR_SUCCESS)
 	{
 		// Log or handle error
-		std::cout << "GetDisplayConfigBufferSizes() failed with error " << status << std::endl;
+		std::wcout << "GetDisplayConfigBufferSizes() failed with error " << status << std::endl;
 		return -1; // return an invalid value or handle the error as appropriate
 	}
 
@@ -287,7 +287,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	   ErrorExit("RegisterDeviceNotification Failed");
    }
 
-   std::cout << "Registered" << std::endl;
+   std::wcout << "Registered" << std::endl;
 
    return TRUE;
 }
@@ -297,9 +297,9 @@ bool set_internal_display_dpi(const wchar_t* from, const wchar_t* to)
 	DisplayData internalDisplay = GetInternalDisplayData();
 	int current_scaling = DpiHelper::GetDPIScalingInfo(internalDisplay.m_adapterId, internalDisplay.m_sourceID).current;
 	writeIntToRegistry(current_scaling, from);
-	std::cout << "Set scaling of internal monitor from " << current_scaling;
+	std::wcout << "Set scaling of internal monitor from " << current_scaling;
 	readIntFromRegistry(&current_scaling, to);
-	std::cout << "% to " << current_scaling << " % " << std::endl;
+	std::wcout << "% to " << current_scaling << " % " << std::endl;
 	return DpiHelper::SetDPIScaling(internalDisplay.m_adapterId, internalDisplay.m_sourceID, current_scaling);
 }
 //
@@ -350,19 +350,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case DBT_DEVICEARRIVAL:
 			if (switchMouseAcceleration(false))
 				ErrorExit("switchMouseAcceleration");
-			std::cout << "Monitor plugged in" << std::endl;
+			std::wcout << "Monitor plugged in" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
-			std::cout << "Monitors present:" << current_n_displays << std::endl;
+			std::wcout << "Monitors present:" << current_n_displays << std::endl;
 
 			if (current_n_displays == 2) {
 				set_internal_display_dpi(REG_WITHOUT_NAME, REG_WITH_NAME);
 			}
 			break;
 		case DBT_DEVICEREMOVECOMPLETE:
-			std::cout << "Monitor removed" << std::endl;
+			std::wcout << "Monitor removed" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
 			current_n_displays--; // GetNumberOfDisplays() seems to have some delay, so we infere that it is one less now
-			std::cout << "Monitors remaining:" << current_n_displays << std::endl;
+			std::wcout << "Monitors remaining:" << current_n_displays << std::endl;
 			if(current_n_displays<=1) {
 				set_internal_display_dpi(REG_WITH_NAME, REG_WITHOUT_NAME);
 			}
