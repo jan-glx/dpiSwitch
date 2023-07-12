@@ -1,4 +1,4 @@
-# dpiSwitcher
+# dpiSwitcher - currently disfunctional,see #3
 [![GitHub license](https://img.shields.io/github/license/jan-glx/dpiswitch.svg)](LICENSE)
 [![AppVeyor](https://img.shields.io/appveyor/ci/jan-glx/dpiswitch.svg)](https://ci.appveyor.com/project/jan-glx/dpiswitch)
 [![Github All Releases](https://img.shields.io/github/downloads/jan-glx/dpiswitch/total.svg)](https://github.com/jan-glx/dpiSwitch/releases/latest)
