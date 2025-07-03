@@ -347,20 +347,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ErrorExit("UnregisterDeviceNotification");
 		PostQuitMessage(0);
 		break;
-	case WM_DISPLAYCHANGE:
-		std::wcout << "WM_DISPLAYCHANGE" << std::endl;
-		current_n_displays = GetNumberOfDisplays();
-		DisplayData internalDisplay = GetInternalDisplayData();
-		current_scaling = DpiHelper::GetDPIScalingInfo(internalDisplay.m_adapterId, internalDisplay.m_sourceID).current;
-		reg_val_name = L"last_seen_dpi_for_" + std::to_wstring(current_n_displays) + L"_displays";
-		writeIntToRegistry(current_scaling, reg_val_name.c_str());
-		std::wcout << L"saved " << current_scaling << L" to " << reg_val_name << std::endl;
-		break;
-	case WM_DEVICECHANGE:
-		// Output some messages to the window.
-		switch (wParam)
-		{
-		case DBT_DEVICEARRIVAL:
+        case WM_DISPLAYCHANGE:
+                std::wcout << "WM_DISPLAYCHANGE" << std::endl;
+                current_n_displays = GetNumberOfDisplays();
+                DisplayData internalDisplay = GetInternalDisplayData();
+                current_scaling = DpiHelper::GetDPIScalingInfo(internalDisplay.m_adapterId, internalDisplay.m_sourceID).current;
+                reg_val_name = L"last_seen_dpi_for_" + std::to_wstring(current_n_displays) + L"_displays";
+                writeIntToRegistry(current_scaling, reg_val_name.c_str());
+                std::wcout << L"saved " << current_scaling << L" to " << reg_val_name << std::endl;
+                break;
+        case WM_POWERBROADCAST:
+                if (wParam == PBT_APMRESUMEAUTOMATIC || wParam == PBT_APMRESUMESUSPEND)
+                {
+                        Sleep(500); // allow OS to update display configuration
+                        int new_n_displays = GetNumberOfDisplays();
+                        if (new_n_displays != current_n_displays)
+                        {
+                                std::wcout << "Display count changed after resume" << std::endl;
+                                current_n_displays = new_n_displays;
+                                set_internal_display_dpi_from_registry(current_n_displays);
+                        }
+                        return TRUE;
+                }
+                break;
+        case WM_DEVICECHANGE:
+                // Output some messages to the window.
+                switch (wParam)
+                {
+                case DBT_DEVICEARRIVAL:
 			std::wcout << "Monitor plugged in" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
 			std::wcout << "Monitors present:" << current_n_displays << std::endl;
