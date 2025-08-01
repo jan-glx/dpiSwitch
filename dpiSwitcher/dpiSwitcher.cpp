@@ -356,11 +356,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		writeIntToRegistry(current_scaling, reg_val_name.c_str());
 		std::wcout << L"saved " << current_scaling << L" to " << reg_val_name << std::endl;
 		break;
-	case WM_DEVICECHANGE:
-		// Output some messages to the window.
-		switch (wParam)
+	case WM_POWERBROADCAST:
+		if (wParam == PBT_APMRESUMEAUTOMATIC || wParam == PBT_APMRESUMESUSPEND)
 		{
-		case DBT_DEVICEARRIVAL:
+		Sleep(500); // allow OS to update display configuration
+		int new_n_displays = GetNumberOfDisplays();
+		if (new_n_displays != current_n_displays)
+		{
+		std::wcout << "Display count changed after resume" << std::endl;
+		current_n_displays = new_n_displays;
+		set_internal_display_dpi_from_registry(current_n_displays);
+		}
+		return TRUE;
+		}
+		break;
+        case WM_DEVICECHANGE:
+                // Output some messages to the window.
+                switch (wParam)
+                {
+                case DBT_DEVICEARRIVAL:
 			std::wcout << "Monitor plugged in" << std::endl;
 			current_n_displays = GetNumberOfDisplays();
 			std::wcout << "Monitors present:" << current_n_displays << std::endl;
